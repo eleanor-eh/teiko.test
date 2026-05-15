@@ -26,11 +26,19 @@ from scipy import stats
 #Never done this before... will investigate more
 
 
+# Connect to SQLite database (created by init_db.py)
+conn = sqlite3.connect('cell_count.db')
+
+# Load cell_counts table into a df
+celldf = pd.read_sql_query('SELECT * FROM cell_counts', conn)
+conn.close()
+
+
 # In[13]:
 
 
 #read in the csv data file
-celldf = pd.read_csv('cell-count.csv')
+#celldf = pd.read_csv('cell-count.csv')
 #print(celldf.head())
 
 
@@ -65,7 +73,7 @@ celldf['total_count'] = celldf[['b_cell', 'cd8_t_cell', 'cd4_t_cell', 'nk_cell',
 
 
 #create more sepecific df
-sumdf = celldf[['sample', 'total_count', 'b_cell', 'cd8_t_cell', 'cd4_t_cell', 'nk_cell', 'monocyte']]
+sumdf = celldf[['sample', 'total_count', 'b_cell', 'cd8_t_cell', 'cd4_t_cell', 'nk_cell', 'monocyte']].copy()
 
 #create column with percentage for each cell type for each sample
 sumdf['b_cell_%'] = (sumdf['b_cell'] / sumdf['total_count']) * 100
@@ -225,13 +233,12 @@ sex.to_csv("Sex_counts.csv", index = False)
 
 qdf = celldf[(celldf['condition'] == 'melanoma') & (celldf['sex'] == 'M') & (celldf['response'] == 'yes') &
              (celldf['time_from_treatment_start'] == 0)][['b_cell']]
-print(qdf.head())
 
 
 # In[54]:
 
 
-qdf['b_cell'].mean()
+print(qdf['b_cell'].mean())
 
 
 # In[ ]:
